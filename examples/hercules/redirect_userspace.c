@@ -157,7 +157,7 @@ int xdp_prog_redirect_userspace(struct xdp_md *ctx)
 	}
 	__sync_fetch_and_add(&redirect_count, 1);
 	char buffer[100];
-    sprintf(buffer, "The num_xsks is %d \n", (int)num_xsks);
+    sprintf(buffer, "The num_xsks is %d \n", (int)*num_xsks);
     klee_warning(buffer);
 
 	return bpf_redirect_map(&xsks_map, (redirect_count) % (*_num_xsks),
