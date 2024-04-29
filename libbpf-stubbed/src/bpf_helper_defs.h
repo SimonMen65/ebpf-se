@@ -1613,21 +1613,22 @@ static __attribute__ ((noinline)) long bpf_redirect_map (void *map, __u32 key, _
   */
   struct bpf_map_def *map_ptr = ((struct bpf_map_def *)map);
   void* redirected_elem;
-  if (bpf_map_stub_types[map_ptr->map_id] == ArrayStub){
-    klee_warning("Array stub triggered \n");
+  if (bpf_map_stub_types[map_ptr->map_id] == ArrayStub)
     redirected_elem = array_lookup_elem(bpf_map_stubs[map_ptr->map_id], &key);
-  }
   else if (bpf_map_stub_types[map_ptr->map_id] == MapStub){
+    redirected_elem = map_lookup_elem(bpf_map_stubs[map_ptr->map_id], &key);
     klee_warning("Map stub triggered \n");
-    redirected_elem = map_lookup_elem(bpf_map_stubs[map_ptr->map_id], &key);}
-  else if (bpf_map_stub_types[map_ptr->map_id] == MapofMapStub){
-    klee_warning("MoM stub triggered \n");
-    redirected_elem = map_of_map_lookup_elem(bpf_map_stubs[map_ptr->map_id], &key);}
-  else{
-    klee_warning("Else triggered \n");
-    assert(0 && "Unsupported map type");}
-  if(redirected_elem)
-      return XDP_REDIRECT;
+  }
+
+  else if (bpf_map_stub_types[map_ptr->map_id] == MapofMapStub)
+    redirected_elem = map_of_map_lookup_elem(bpf_map_stubs[map_ptr->map_id], &key);
+  else
+    assert(0 && "Unsupported map type");
+  if(redirected_elem){
+    klee_warning("Redirect elem is Null or 0\n");
+    return XDP_REDIRECT;
+  }
+      
   return flags & 3;
 }
 
