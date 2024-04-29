@@ -151,7 +151,7 @@ int xdp_prog_redirect_userspace(struct xdp_md *ctx)
 	*(__u32 *)data = offset;
 
 	__u32 *_num_xsks = bpf_map_lookup_elem(&num_xsks, &zero);
-	if(_num_xsks == NULL) {
+	if(_num_xsks == NULL || _num_xsks == 0) {
 		VIGOR_TAG(REACHED_STATE, NO_NUM_XSK); // NOT REACHED
 		return XDP_PASS;
 	}
