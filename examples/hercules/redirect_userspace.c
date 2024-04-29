@@ -156,7 +156,9 @@ int xdp_prog_redirect_userspace(struct xdp_md *ctx)
 		return XDP_PASS;
 	}
 	__sync_fetch_and_add(&redirect_count, 1);
-	klee_warning("The num_xsks is %d \n", *_num_xsks);
+	char buffer[100];
+    sprintf(buffer, "The num_xsks is %d \n", num_xsks);
+    klee_warning(buffer);
 
 	return bpf_redirect_map(&xsks_map, (redirect_count) % (*_num_xsks),
 	                        0); // XXX distribute across multiple sockets, once available
