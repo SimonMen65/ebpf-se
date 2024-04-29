@@ -151,11 +151,12 @@ int xdp_prog_redirect_userspace(struct xdp_md *ctx)
 	*(__u32 *)data = offset;
 
 	__u32 *_num_xsks = bpf_map_lookup_elem(&num_xsks, &zero);
-	if(_num_xsks == NULL || _num_xsks == 0) {
+	if(_num_xsks == NULL) {
 		VIGOR_TAG(REACHED_STATE, NO_NUM_XSK); // NOT REACHED
 		return XDP_PASS;
 	}
 	__sync_fetch_and_add(&redirect_count, 1);
+	klee_warning("The num_xsks is %d \n", *_num_xsks);
 
 	return bpf_redirect_map(&xsks_map, (redirect_count) % (*_num_xsks),
 	                        0); // XXX distribute across multiple sockets, once available

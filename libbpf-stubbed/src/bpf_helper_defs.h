@@ -1625,7 +1625,7 @@ static __attribute__ ((noinline)) long bpf_redirect_map (void *map, __u32 key, _
   else
     assert(0 && "Unsupported map type");
   if(redirected_elem){
-    klee_warning("Redirect elem is Null or 0\n");
+    klee_warning("Redirect elem is Null or 0 and will return %d \n", XDP_REDIRECT);
     return XDP_REDIRECT;
   }
       
