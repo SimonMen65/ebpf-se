@@ -112,10 +112,11 @@ void bpf_map_init_stub(struct bpf_map_def *map, char *name, char *key_type, char
   return;
 }
 
-void bpf_map_of_maps_init_stub(struct bpf_map_def* outer, struct bpf_map_def* inner, char *name, char *key_type, char * val_type){
+void bpf_map_of_maps_init_stub(struct bpf_map_def* outer, struct bpf_map_def* inner,char *outer_name, char *name, char *key_type, char * val_type){
   outer->map_id = bpf_map_ctr++;
   assert(outer->type == 12 || outer->type == 13);
-  bpf_map_stubs[outer->map_id] = map_of_map_allocate(inner,bpf_map_ctr);
+  bpf_map_stubs[outer->map_id] = map_of_map_allocate(outer_name,inner,bpf_map_ctr);
+  //bpf_map_stubs[outer->map_id] = map_of_map_allocate(inner,bpf_map_ctr);
   bpf_map_stub_types[outer->map_id] = MapofMapStub;
   assert(inner->type == 1 || inner->type == 2 || inner->type == 5 || inner->type == 9 || inner->type == 27);
   if (inner->type == 2) {
