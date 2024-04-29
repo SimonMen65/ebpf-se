@@ -237,24 +237,24 @@ long map_update_elem(struct MapStub *map, const void *key, const void *value,
   return 0;
 }
 
-// long map_delete_elem(struct MapStub *map, const void *key) {
-//   for (int n = 0; n < map->keys_seen; ++n) {
-//     void *key_ptr = map->keys_present + n * map->key_size;
-//     if (!memcmp(key_ptr, key, map->key_size)) {
-//       klee_assert(!map->key_deleted[n] &&
-//                   "Trying to delete already deleted key");
-//       map->key_deleted[n] = 1;
-//       return 0;
-//     }
-//   }
-//   // TODO: figure out behavior when deleting nonexistent key
-//   klee_assert(map->keys_seen < NUM_ELEMS && "No space left in the map stub");
-//   void *key_ptr = map->keys_present + map->keys_seen * map->key_size;
-//   memcpy(key_ptr, key, map->key_size);
-//   map->key_deleted[map->keys_seen] = 1;
-//   map->keys_seen++;
-//   return 0;
-// }
+long map_delete_elem(struct MapStub *map, const void *key) {
+  for (int n = 0; n < map->keys_seen; ++n) {
+    void *key_ptr = map->keys_present + n * map->key_size;
+    if (!memcmp(key_ptr, key, map->key_size)) {
+      klee_assert(!map->key_deleted[n] &&
+                  "Trying to delete already deleted key");
+      map->key_deleted[n] = 1;
+      return 0;
+    }
+  }
+  // TODO: figure out behavior when deleting nonexistent key
+  klee_assert(map->keys_seen < NUM_ELEMS && "No space left in the map stub");
+  void *key_ptr = map->keys_present + map->keys_seen * map->key_size;
+  memcpy(key_ptr, key, map->key_size);
+  map->key_deleted[map->keys_seen] = 1;
+  map->keys_seen++;
+  return 0;
+}
 
 /* Array of maps Stub */
 
@@ -278,15 +278,17 @@ void *map_of_map_allocate(char *outer_name, struct bpf_map_def* inner_map, unsig
 }
 
 void *map_of_map_lookup_elem(struct MapofMapStub *map, const void *key) {
-  // if (!klee_int("map in map found")) return NULL;
-  // klee_assert(map->internal_map.type == 1 || map->internal_map.type == 2 || map->internal_map.type == 5 || map->internal_map.type == 9 || map->internal_map.type == 27);
-  // return &(map->internal_map);
+  if (!klee_int("map in map found")) return NULL;
+  klee_assert(map->internal_map.type == 1 || map->internal_map.type == 2 || map->internal_map.type == 5 || map->internal_map.type == 9 || map->internal_map.type == 27);
+  return &(map->internal_map);
 
+  // code from eqc start
   unsigned int index = *(unsigned int *)key;
   klee_assert(index >= MIN_PROC_ID && index <= MAX_PROC_ID);
   klee_assert(map->internal_map.type == 1 || map->internal_map.type == 5 || map->internal_map.type == 9);
   map->internal_map.type = 5; // Internal map(s) is now per-cpu hash.
   return &(map->internal_map);
+  // code from eqc end
 }
 
 #endif /* __BPF_MAP_HELPERS__ */
