@@ -165,14 +165,21 @@ static __attribute__ ((noinline)) void *bpf_map_lookup_elem(void *map, const voi
   struct bpf_map_def *map_ptr = ((struct bpf_map_def *)map);
   // TRACE_VAL((uint32_t)(map_ptr), "map", _u32)
   // TRACE_VAR(map_ptr->type, "bpf_map_type");
-  if (bpf_map_stub_types[map_ptr->map_id] == ArrayStub)
+  if (bpf_map_stub_types[map_ptr->map_id] == ArrayStub){
+    klee_warning("Array Stub Triggered \n");
     return array_lookup_elem(bpf_map_stubs[map_ptr->map_id], key);
-  else if (bpf_map_stub_types[map_ptr->map_id] == MapStub)
-    return map_lookup_elem(bpf_map_stubs[map_ptr->map_id], key);
-  else if (bpf_map_stub_types[map_ptr->map_id] == MapofMapStub)
-    return map_of_map_lookup_elem(bpf_map_stubs[map_ptr->map_id], key);
-  else
+  }
+  else if (bpf_map_stub_types[map_ptr->map_id] == MapStub){
+    klee_warning("Map Stub Triggered \n");
+    return map_lookup_elem(bpf_map_stubs[map_ptr->map_id], key);}
+  else if (bpf_map_stub_types[map_ptr->map_id] == MapofMapStub){
+    klee_warning("MoM Stub Triggered \n");
+    return map_of_map_lookup_elem(bpf_map_stubs[map_ptr->map_id], key);}
+  else{
+    klee_warning("Else triggered \n");
     assert(0 && "Unsupported map type");
+  }
+    
 }
 #else
 static void *(*bpf_map_lookup_elem)(void *map, const void *key) = (void *) 1;
@@ -1615,19 +1622,14 @@ static __attribute__ ((noinline)) long bpf_redirect_map (void *map, __u32 key, _
   void* redirected_elem;
   if (bpf_map_stub_types[map_ptr->map_id] == ArrayStub)
     redirected_elem = array_lookup_elem(bpf_map_stubs[map_ptr->map_id], &key);
-  else if (bpf_map_stub_types[map_ptr->map_id] == MapStub){
+  else if (bpf_map_stub_types[map_ptr->map_id] == MapStub)
     redirected_elem = map_lookup_elem(bpf_map_stubs[map_ptr->map_id], &key);
-    klee_warning("Map stub triggered \n");
-  }
-
   else if (bpf_map_stub_types[map_ptr->map_id] == MapofMapStub)
     redirected_elem = map_of_map_lookup_elem(bpf_map_stubs[map_ptr->map_id], &key);
   else
     assert(0 && "Unsupported map type");
-  if(redirected_elem){
-    return XDP_REDIRECT;
-  }
-      
+  if(redirected_elem)
+      return XDP_REDIRECT;
   return flags & 3;
 }
 
