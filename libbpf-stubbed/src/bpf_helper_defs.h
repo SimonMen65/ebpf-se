@@ -1614,16 +1614,16 @@ static __attribute__ ((noinline)) long bpf_redirect_map (void *map, __u32 key, _
   struct bpf_map_def *map_ptr = ((struct bpf_map_def *)map);
   void* redirected_elem;
   if (bpf_map_stub_types[map_ptr->map_id] == ArrayStub)
-    printf("Array stub triggered \n");
+    klee_warning("Array stub triggered \n");
     redirected_elem = array_lookup_elem(bpf_map_stubs[map_ptr->map_id], &key);
   else if (bpf_map_stub_types[map_ptr->map_id] == MapStub)
-    printf("Map stub triggered \n");
+    klee_warning("Map stub triggered \n");
     redirected_elem = map_lookup_elem(bpf_map_stubs[map_ptr->map_id], &key);
   else if (bpf_map_stub_types[map_ptr->map_id] == MapofMapStub)
-    printf("MoM stub triggered \n");
+    klee_warning("MoM stub triggered \n");
     redirected_elem = map_of_map_lookup_elem(bpf_map_stubs[map_ptr->map_id], &key);
   else
-    printf("Else triggered \n");
+    klee_warning("Else triggered \n");
     assert(0 && "Unsupported map type");
   if(redirected_elem)
       return XDP_REDIRECT;
