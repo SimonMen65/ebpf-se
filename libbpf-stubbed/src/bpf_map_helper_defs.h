@@ -65,11 +65,6 @@ void unsigned_to_string(unsigned int num, char *str) {
 }
 
 void *array_lookup_elem(struct ArrayStub *array, const void *key) {
-  // unsigned int index = *(unsigned int *)key;
-  // if (index >= array->capacity)
-  //   return NULL;
-  // void *val_ptr = array->data + index * array->value_size;
-  // return val_ptr;
 
   unsigned int index = *(unsigned int *)key;
   // if (index >= array->capacity)
@@ -155,21 +150,6 @@ void *map_allocate(char* name, char* key_type, char* val_type, unsigned int key_
 }
 
 void *map_lookup_elem(struct MapStub *map, const void *key) {
-  // for (int n = 0; n < map->keys_seen; ++n) {
-  //   void *key_ptr = map->keys_present + n * map->key_size;
-  //   if (!memcmp(key_ptr, key, map->key_size)) {
-  //     if (map->key_deleted[n])
-  //       return NULL;
-  //     else {
-  //       void *val_ptr = map->values_present + n * map->value_size;
-  //       if (!(map->keys_cached[n]))
-  //         map->keys_cached[n] = 1;
-  //       return val_ptr;
-  //     }
-  //   }
-  // }
-  // klee_assert(map->keys_seen < NUM_ELEMS && "No space left in the map stub");
-  
   /* Generating symbol name */
   char *val_str = "val_";
   char *sym_name = "_in_";
@@ -188,11 +168,6 @@ void *map_lookup_elem(struct MapStub *map, const void *key) {
   strcat(final_sym_name, sym_name);
   strcat(final_sym_name, map->name);
   int map_has_this_key = klee_int(final_sym_name);
-
-
-  // void *key_ptr = map->keys_present + map->keys_seen * map->key_size;
-  // memcpy(key_ptr, key, map->key_size);
-  // void *val_ptr = map->values_present + map->keys_seen * map->value_size;
 
   if (map_has_this_key) {
     map->key_deleted[map->keys_seen] = 0;
