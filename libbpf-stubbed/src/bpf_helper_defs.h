@@ -169,17 +169,12 @@ static __attribute__ ((noinline)) void *bpf_map_lookup_elem(void *map, const voi
     klee_warning("Array Stub Triggered \n");
     return array_lookup_elem(bpf_map_stubs[map_ptr->map_id], key);
   }
-  else if (bpf_map_stub_types[map_ptr->map_id] == MapStub){
-    klee_warning("Map Stub Triggered \n");
-    return map_lookup_elem(bpf_map_stubs[map_ptr->map_id], key);}
-  else if (bpf_map_stub_types[map_ptr->map_id] == MapofMapStub){
-    klee_warning("MoM Stub Triggered \n");
-    return map_of_map_lookup_elem(bpf_map_stubs[map_ptr->map_id], key);}
-  else{
-    klee_warning("Else triggered \n");
+  else if (bpf_map_stub_types[map_ptr->map_id] == MapStub)
+    return map_lookup_elem(bpf_map_stubs[map_ptr->map_id], key);
+  else if (bpf_map_stub_types[map_ptr->map_id] == MapofMapStub)
+    return map_of_map_lookup_elem(bpf_map_stubs[map_ptr->map_id], key);
+  else
     assert(0 && "Unsupported map type");
-  }
-    
 }
 #else
 static void *(*bpf_map_lookup_elem)(void *map, const void *key) = (void *) 1;

@@ -66,6 +66,12 @@ void unsigned_to_string(unsigned int num, char *str) {
 
 void *array_lookup_elem(struct ArrayStub *array, const void *key) {
   unsigned int index = *(unsigned int *)key;
+  if (index >= array->capacity)
+    return NULL;
+  void *val_ptr = array->data + index * array->value_size;
+  return val_ptr;
+
+  unsigned int index = *(unsigned int *)key;
   // if (index >= array->capacity)
   //   return NULL;
   klee_assume(index < array->capacity);
