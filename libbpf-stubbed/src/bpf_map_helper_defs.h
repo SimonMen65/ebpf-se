@@ -85,7 +85,7 @@ void *array_lookup_elem(struct ArrayStub *array, const void *key) {
 
   void *ret_value = malloc(array->value_size);
   klee_make_symbolic(ret_value, array->value_size, ret_value_str);
-  return ret_value;
+  return val_ptr;
 }
 
 long array_update_elem(struct ArrayStub *array, const void *key,
