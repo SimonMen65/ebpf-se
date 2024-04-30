@@ -65,32 +65,32 @@ void unsigned_to_string(unsigned int num, char *str) {
 }
 
 void *array_lookup_elem(struct ArrayStub *array, const void *key) {
+  // unsigned int index = *(unsigned int *)key;
+  // if (index >= array->capacity)
+  //   return NULL;
+  // void *val_ptr = array->data + index * array->value_size;
+  // return val_ptr;
+
   unsigned int index = *(unsigned int *)key;
   if (index >= array->capacity)
     return NULL;
+  //klee_assume(index < array->capacity);
+
   void *val_ptr = array->data + index * array->value_size;
+  char lookup_num_str[20];
+  array->lookup_num++;
+  unsigned_to_string(array->lookup_num, lookup_num_str);
+
+  char *val_str = "val_";
+  char *ret_value_str = (char *)malloc(1 + strlen(val_str) + strlen(lookup_num_str) + 1 + strlen(array->name));
+  strcpy(ret_value_str, val_str);
+  strcat(ret_value_str, lookup_num_str);
+  strcat(ret_value_str, "_");
+  strcat(ret_value_str, array->name);
+
+  void *ret_value = malloc(array->value_size);
+  klee_make_symbolic(ret_value, array->value_size, ret_value_str);
   return val_ptr;
-
-  // unsigned int index = *(unsigned int *)key;
-  // // if (index >= array->capacity)
-  // //   return NULL;
-  // klee_assume(index < array->capacity);
-
-  // void *val_ptr = array->data + index * array->value_size;
-  // char lookup_num_str[20];
-  // array->lookup_num++;
-  // unsigned_to_string(array->lookup_num, lookup_num_str);
-
-  // char *val_str = "val_";
-  // char *ret_value_str = (char *)malloc(1 + strlen(val_str) + strlen(lookup_num_str) + 1 + strlen(array->name));
-  // strcpy(ret_value_str, val_str);
-  // strcat(ret_value_str, lookup_num_str);
-  // strcat(ret_value_str, "_");
-  // strcat(ret_value_str, array->name);
-
-  // void *ret_value = malloc(array->value_size);
-  // klee_make_symbolic(ret_value, array->value_size, ret_value_str);
-  // return ret_value;
 }
 
 long array_update_elem(struct ArrayStub *array, const void *key,
