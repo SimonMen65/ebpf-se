@@ -72,9 +72,9 @@ void *array_lookup_elem(struct ArrayStub *array, const void *key) {
   // return val_ptr;
 
   unsigned int index = *(unsigned int *)key;
-  if (index >= array->capacity)
-    return NULL;
-  //klee_assume(index < array->capacity);
+  // if (index >= array->capacity)
+  //   return NULL;
+  klee_assume(index < array->capacity);
 
   void *val_ptr = array->data + index * array->value_size;
   char lookup_num_str[20];
