@@ -394,4 +394,12 @@ extern void bpf_iter_num_destroy(struct bpf_iter_num *it) __weak __ksym;
 )
 #endif /* bpf_repeat */
 
+#define BPF_ANNOTATE_KV_PAIR(name, type_key, type_val)    \
+  struct ____btf_map_##name {       \
+    type_key key;         \
+    type_val value;         \
+  };              \
+  struct ____btf_map_##name       \
+  __attribute__ ((section(".maps." #name), used))   \
+    ____btf_map_##name = { }
 #endif

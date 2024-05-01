@@ -391,9 +391,6 @@ static __u32 (*bpf_get_prandom_u32)(void) = (void *) 7;
 
 #ifdef USES_BPF_GET_SMP_PROC_ID
 __u32 proc_id;
-static __attribute__ ((noinline)) void stub_init_proc_id(__u32 p) {
-  proc_id = p;
-}
 
 static __attribute__ ((noinline)) __u32 bpf_get_smp_processor_id(void){
   return proc_id;
@@ -1024,7 +1021,7 @@ static __attribute__ ((noinline)) __s64 bpf_csum_diff(__be32 *from, __u32 from_s
   return csum;
 }
 #else
-static __s64 (*bpf_csum_diff)(__be32 *from, __u32 from_size, __be32 *to, __u32 to_size, __wsum seed) = (void *) 28;
+static __s64 (*bpf_csum_diff)(__be32 *from, __u32 from_size, void *to, __u32 to_size, __wsum seed) = (void *) 28;
 
 #endif
 /*
