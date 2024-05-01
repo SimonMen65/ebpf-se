@@ -156,10 +156,6 @@ int xdp_prog_redirect_userspace(struct xdp_md *ctx)
 		return XDP_PASS;
 	}
 	__sync_fetch_and_add(&redirect_count, 1);
-	char buffer[100];
-	__u32 multp = 10;
-    sprintf(buffer, "The num_xsks + 10 is %u \n", multp + *_num_xsks);
-    klee_warning(buffer);
 
 	return bpf_redirect_map(&xsks_map, (redirect_count) % (*_num_xsks),
 	                        0); // XXX distribute across multiple sockets, once available

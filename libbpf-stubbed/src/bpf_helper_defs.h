@@ -165,10 +165,8 @@ static __attribute__ ((noinline)) void *bpf_map_lookup_elem(void *map, const voi
   struct bpf_map_def *map_ptr = ((struct bpf_map_def *)map);
   // TRACE_VAL((uint32_t)(map_ptr), "map", _u32)
   // TRACE_VAR(map_ptr->type, "bpf_map_type");
-  if (bpf_map_stub_types[map_ptr->map_id] == ArrayStub){
-    klee_warning("Array Stub Triggered \n");
+  if (bpf_map_stub_types[map_ptr->map_id] == ArrayStub)
     return array_lookup_elem(bpf_map_stubs[map_ptr->map_id], key);
-  }
   else if (bpf_map_stub_types[map_ptr->map_id] == MapStub)
     return map_lookup_elem(bpf_map_stubs[map_ptr->map_id], key);
   else if (bpf_map_stub_types[map_ptr->map_id] == MapofMapStub)
