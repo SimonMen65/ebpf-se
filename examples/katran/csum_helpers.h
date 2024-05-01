@@ -21,8 +21,8 @@
 #include <linux/ip.h>
 #include <linux/ipv6.h>
 
-#include "bpf.h"
-#include "bpf_helpers.h"
+#include <linux/bpf.h>
+#include <bpf/bpf_helpers.h>
 
 __attribute__((__always_inline__))
 static inline __u16 csum_fold_helper(__u64 csum) {
