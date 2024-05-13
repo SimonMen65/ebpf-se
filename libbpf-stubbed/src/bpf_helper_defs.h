@@ -139,11 +139,11 @@ void bpf_map_reset_stub(struct bpf_map_def* map) {
     assert(0 && "Reset unsupported for given map type");
 }
 #define BPF_MAP_INIT(x,y,z,w) bpf_map_init_stub(x,y,z,w)
-#define BPF_MAP_OF_MAPS_INIT(x,y,z,w,v) bpf_map_of_maps_init_stub(x,y,z,w,v)
+#define BPF_MAP_OF_MAPS_INIT(x,y,u,z,w,v) bpf_map_of_maps_init_stub(x,y,u,z,w,v)
 #define BPF_MAP_RESET(x) bpf_map_reset_stub(x)
 #else
-#define BPF_MAP_INIT(x,y,z)
-#define BPF_MAP_OF_MAPS_INIT(x,y,z,w)
+#define BPF_MAP_INIT(x,y,z,w)
+#define BPF_MAP_OF_MAPS_INIT(x,y,u,z,w,v)
 #endif
 
 /*
