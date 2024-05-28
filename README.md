@@ -44,4 +44,4 @@ Please follow the steps listed in [examples/README.md](examples/README.md).
 # Other information
 
 - All code in this repository was tested on Ubuntu 22.04.
-- For any questions, please contact [Rishabh Iyer](mailto:rishabh.iyer@berkeley.edu)
+
