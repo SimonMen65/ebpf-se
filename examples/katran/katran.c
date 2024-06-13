@@ -14,8 +14,8 @@
 #define USES_BPF_MAP_UPDATE_ELEM
 #endif
 
-#ifndef USES_BPF_GET_SMP_PROC_ID
-#define USES_BPF_GET_SMP_PROC_ID
+#ifndef USES_BPF_GET_SMP_PROC_ID_Katran
+#define USES_BPF_GET_SMP_PROC_ID_Katran
 #endif
 
 #ifndef USES_BPF_KTIME_GET_NS
