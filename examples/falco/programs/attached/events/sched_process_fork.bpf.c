@@ -301,7 +301,7 @@ int main(int argc, char **argv) {
 	__u64 pid_tgid;
 	klee_make_symbolic(&pid_tgid, sizeof(pid_tgid), "pid_tgid");
 	stub_init_pid_tgid(pid_tgid);
-	BPF_MAP_OF_MAPS_INIT(&ringbuf_maps, &ringbuf_map, "ringbuf_maps", "processor", "ringbuf");
+	BPF_MAP_OF_MAPS_INIT(&ringbuf_maps, &ringbuf_map, "ringbuf_outer_maps","ringbuf_maps", "processor", "ringbuf");
 	BPF_MAP_INIT(&counter_maps, "counter_maps", "processor", "counter_map");
 	BPF_MAP_RESET(&counter_maps);
 	BPF_MAP_INIT(&auxiliary_maps, "auxiliary_maps", "processor", "auxiliary_map");
