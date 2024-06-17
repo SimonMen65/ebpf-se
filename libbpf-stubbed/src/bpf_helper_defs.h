@@ -63,11 +63,20 @@ struct bpf_map_def {
 #define OPENED_INIT(...) (0)
 #define OPENED_CLOSE() (0)
 #else 
+#include <json-c/json.h>
+#include <stdbool.h>
+#include <stdio.h>
+#include <dirent.h>
+#include <sys/types.h> 
+#include <errno.h>
 char *reply_test_dir;
 bool replay_mode = false;
 char *json_file_path = NULL;
 json_object *reply_output_root = NULL;
 #include "bpf/bpf_map_helper_defs_replay.h"
+
+#define OPENED_INIT(x,y) opened_test_init(x,y)
+#define OPENED_CLOSE() opened_test_close()
 #endif 
 
 #include <assert.h>
