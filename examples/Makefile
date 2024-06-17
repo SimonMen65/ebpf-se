@@ -74,6 +74,24 @@ xdp-target: $(XDP_C) Makefile $(KERN_USER_H) $(EXTRA_DEPS)
 		-O0 -emit-llvm -c -g $(XDP_C)
 	# $(LLC) -march=bpf -filetype=obj -o $@ ${@:.o=.ll}
 
+xdp-target-runtest: $(XDP_C) Makefile $(KERN_USER_H) $(EXTRA_DEPS)
+	$(CLANG) \
+	    -D __BPF_TRACING__ -DKLEE_VERIFICATION -DREPLAY \
+		-DOPENED_EQUIVALENCE\
+	    $(BPF_CFLAGS) \
+		$(LIBJSON_PKG_CFLAGS) \
+	    -I $(KLEE_INCLUDE) \
+	    -Wall \
+	    -Wno-unused-value \
+	    -Wno-pointer-sign \
+	    -Wno-compare-distinct-pointer-types \
+	    -Werror \
+	    -fno-builtin \
+		-L/klee/build/lib/ \
+		$(LIBJSON_PKG_LIBS) \
+		-lkleeRuntest \
+	    -O2 -o ${XDP_C:.c=.bin} $(XDP_C) 
+
 libbpf:
 	cd $(LIBBPF_DIR) && bash build.sh
 
