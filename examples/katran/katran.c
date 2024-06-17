@@ -14,8 +14,8 @@
 #define USES_BPF_MAP_UPDATE_ELEM
 #endif
 
-#ifndef USES_BPF_GET_SMP_PROC_ID
-#define USES_BPF_GET_SMP_PROC_ID
+#ifndef USES_BPF_GET_SMP_PROC_ID_Katran
+#define USES_BPF_GET_SMP_PROC_ID_Katran
 #endif
 
 #ifndef USES_BPF_KTIME_GET_NS
@@ -31,7 +31,7 @@
 int main(int argc, char** argv){
   BPF_TIME_INIT();
   BPF_MAP_INIT(&vip_map, "vip_map", "pkt.vip", "vip_metadata");
-  BPF_MAP_OF_MAPS_INIT(&lru_mapping, &fallback_cache, "flowtable", "pkt.flow", "backend");
+  BPF_MAP_OF_MAPS_INIT(&lru_mapping, &fallback_cache, "lru_mapping", "fallback_cache", "pkt.flow", "backend");
   BPF_MAP_INIT(&fallback_cache, "flowtable", "pkt.flow", "backend");
   BPF_MAP_INIT(&ch_rings, "vip_to_real_map", "", "backend_real_id");
   BPF_MAP_INIT(&reals, "backend_metadata_map", "", "backend_metadata");

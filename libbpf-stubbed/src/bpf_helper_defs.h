@@ -112,10 +112,11 @@ void bpf_map_init_stub(struct bpf_map_def *map, char *name, char *key_type, char
   return;
 }
 
-void bpf_map_of_maps_init_stub(struct bpf_map_def* outer, struct bpf_map_def* inner, char *name, char *key_type, char * val_type){
+void bpf_map_of_maps_init_stub(struct bpf_map_def* outer, struct bpf_map_def* inner,  char *outer_name, char *name, char *key_type, char * val_type){
   outer->map_id = bpf_map_ctr++;
   assert(outer->type == 12 || outer->type == 13);
-  bpf_map_stubs[outer->map_id] = map_of_map_allocate(inner,bpf_map_ctr);
+  bpf_map_stubs[outer->map_id] = map_of_map_allocate(outer_name,inner,bpf_map_ctr);
+  //bpf_map_stubs[outer->map_id] = map_of_map_allocate(inner,bpf_map_ctr);
   bpf_map_stub_types[outer->map_id] = MapofMapStub;
   assert(inner->type == 1 || inner->type == 2 || inner->type == 5 || inner->type == 9 || inner->type == 27);
   if (inner->type == 2) {
@@ -138,11 +139,11 @@ void bpf_map_reset_stub(struct bpf_map_def* map) {
     assert(0 && "Reset unsupported for given map type");
 }
 #define BPF_MAP_INIT(x,y,z,w) bpf_map_init_stub(x,y,z,w)
-#define BPF_MAP_OF_MAPS_INIT(x,y,z,w,v) bpf_map_of_maps_init_stub(x,y,z,w,v)
+#define BPF_MAP_OF_MAPS_INIT(x,y,u,z,w,v) bpf_map_of_maps_init_stub(x,y,u,z,w,v)
 #define BPF_MAP_RESET(x) bpf_map_reset_stub(x)
 #else
-#define BPF_MAP_INIT(x,y,z)
-#define BPF_MAP_OF_MAPS_INIT(x,y,z,w)
+#define BPF_MAP_INIT(x,y,z,w)
+#define BPF_MAP_OF_MAPS_INIT(x,y,u,z,w,v)
 #endif
 
 /*
@@ -386,8 +387,15 @@ static __u32 (*bpf_get_prandom_u32)(void) = (void *) 7;
  * 	The SMP id of the processor running the program.
  */
 
-#ifdef USES_BPF_GET_SMP_PROC_ID
+#if defined USES_BPF_GET_SMP_PROC_ID_Katran
 __u32 proc_id;
+
+static __attribute__ ((noinline)) __u32 bpf_get_smp_processor_id(void){
+  return proc_id;
+}
+#elif defined USES_BPF_GET_SMP_PROC_ID
+__u32 proc_id;
+
 static __attribute__ ((noinline)) void stub_init_proc_id(__u32 p) {
   proc_id = p;
 }
@@ -1021,7 +1029,7 @@ static __attribute__ ((noinline)) __s64 bpf_csum_diff(__be32 *from, __u32 from_s
   return csum;
 }
 #else
-static __s64 (*bpf_csum_diff)(__be32 *from, __u32 from_size, __be32 *to, __u32 to_size, __wsum seed) = (void *) 28;
+static __s64 (*bpf_csum_diff)(__be32 *from, __u32 from_size, void *to, __u32 to_size, __wsum seed) = (void *) 28;
 
 #endif
 /*
