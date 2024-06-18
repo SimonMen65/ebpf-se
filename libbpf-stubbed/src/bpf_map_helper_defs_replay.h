@@ -1,7 +1,7 @@
 #ifndef __BPF_MAP_HELPERS__
 #define __BPF_MAP_HELPERS__
 
-#include "klee/klee.h"
+#include <klee/klee.h>
 #include <assert.h>
 #include <stdlib.h>
 #include <string.h>
