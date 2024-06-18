@@ -271,15 +271,41 @@ void bpf_map_reset_stub(struct bpf_map_def* map) {
  * 	found.
  */
 
-#ifdef USES_BPF_MAP_LOOKUP_ELEM
+#if (defined USES_BPF_MAP_LOOKUP_ELEM) && (defined KLEE_VERIFICATION)
+#if (defined OPENED_EQUIVALENCE)
 static __attribute__ ((noinline)) void *bpf_map_lookup_elem(void *map, const void *key) {
-  // if(record_calls){
-  //   klee_trace_ret_just_ptr(sizeof(void*));
-  //   klee_add_bpf_call();
-  // }
+  if(record_calls){
+    klee_trace_ret_just_ptr(sizeof(void*));
+    klee_add_bpf_call();
+  }
+
   struct bpf_map_def *map_ptr = ((struct bpf_map_def *)map);
-  // TRACE_VAL((uint32_t)(map_ptr), "map", _u32)
-  // TRACE_VAR(map_ptr->type, "bpf_map_type");
+  TRACE_VAL((uint32_t)(map_ptr), "map", _u32)
+  TRACE_VAR(map_ptr->type, "bpf_map_type");
+  if (bpf_map_stub_types[map_ptr->map_id] == ArrayStub) {
+    // printf("Call to array_lookup_elem\n");
+    return array_lookup_elem(bpf_map_stubs[map_ptr->map_id], key);
+  } else if (bpf_map_stub_types[map_ptr->map_id] == MapStub) {
+    // printf("Call to map_lookup_elem\n");
+    return map_lookup_elem(bpf_map_stubs[map_ptr->map_id], key);
+  } else if (bpf_map_stub_types[map_ptr->map_id] == MapofMapStub) {
+    // printf("Call to map_of_map_lookup_elem\n");
+    return map_of_map_lookup_elem(bpf_map_stubs[map_ptr->map_id], key);
+  } else {
+    assert(0 && "Unsupported map type");
+  }
+}
+#else
+static __attribute__ ((noinline)) void *bpf_map_lookup_elem(void *map, const void *key) {
+  if(record_calls){
+    klee_trace_ret_just_ptr(sizeof(void*));
+    klee_add_bpf_call();
+  }
+
+  klee_warning("Calling wrong bpf_map_lookup_elem");
+  struct bpf_map_def *map_ptr = ((struct bpf_map_def *)map);
+  TRACE_VAL((uint32_t)(map_ptr), "map", _u32)
+  TRACE_VAR(map_ptr->type, "bpf_map_type");
   if (bpf_map_stub_types[map_ptr->map_id] == ArrayStub)
     return array_lookup_elem(bpf_map_stubs[map_ptr->map_id], key);
   else if (bpf_map_stub_types[map_ptr->map_id] == MapStub)
@@ -289,8 +315,9 @@ static __attribute__ ((noinline)) void *bpf_map_lookup_elem(void *map, const voi
   else
     assert(0 && "Unsupported map type");
 }
+#endif
 #else
-static void *(*bpf_map_lookup_elem)(void *map, const void *key) = (void *) 1;
+static void *(*bpf_map_lookup_elem)(void *map, const void *key) = (void *)1;
 
 #endif
 
