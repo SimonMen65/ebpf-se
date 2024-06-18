@@ -8,6 +8,9 @@ LLC=llc-$(LLVM_RELEASE)
 CLANG=clang-$(LLVM_RELEASE)
 CC := gcc
 UNAME_P := $(shell uname -p)
+PKG_CONFIG := pkg-config
+LIBJSON_PKG_CFLAGS := $(shell $(PKG_CONFIG) --cflags json-c)
+LIBJSON_PKG_LIBS := $(shell $(PKG_CONFIG) --static --libs json-c)
 
 XDP_C ?= ${XDP_TARGETS:=.c}
 XDP_OBJ = ${XDP_C:.c=.o}
