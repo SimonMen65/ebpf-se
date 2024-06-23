@@ -104,3 +104,5 @@ symbex:
 		-solver-backend=z3 --exit-on-error -max-memory=750000 -search=dfs $(XDP_TARGETS).bc
 	
 build-tests: clean libbpf xdp-target symbex
+
+build-replay-tests: clean libbpf xdp-target-runtest
