@@ -90,7 +90,7 @@ xdp-target-runtest: $(XDP_C) Makefile $(KERN_USER_H) $(EXTRA_DEPS)
 	    -Wno-compare-distinct-pointer-types \
 	    -Werror \
 	    -fno-builtin \
-		-L/home/simon/new_tool/deps/klee/build/lib/ \
+		-L/home/ebpf-se/tool/deps/klee/build/lib/ \
 		$(LIBJSON_PKG_LIBS) \
 		-lkleeRuntest \
 	    -O2 -o ${XDP_C:.c=.bin} $(XDP_C) 
